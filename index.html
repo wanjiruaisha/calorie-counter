@@ -9,6 +9,7 @@
 </head>
 <body class="bg-slate-100 min-h-screen flex items-center justify-center p-4">
 
+     <!-- Main Application Container -->
   <main class="bg-white w-full max-w-xl rounded-2xl shadow-lg p-6">
     <h1 class="text-3xl font-bold text-center text-emerald-600 mb-2">
       Calorie Counter
@@ -18,6 +19,7 @@
       Track your daily food calories
     </p>
 
+        <!-- Form For Adding Food Items -->
     <form id="foodForm" class="space-y-4">
       <input
         type="text"
@@ -45,11 +47,13 @@
 
     <p id="message" class="text-center mt-3 text-sm"></p>
 
+    <!-- Food Items Display Section -->
     <section class="mt-6">
       <h2 class="text-xl font-semibold mb-3">Food Items</h2>
       <ul id="foodList" class="space-y-3"></ul>
     </section>
 
+    <!-- Total Calories Section -->
     <section class="mt-6 bg-emerald-50 p-4 rounded-lg">
       <h2 class="text-lg font-bold">
         Total Calories: <span id="totalCalories">0</span>
