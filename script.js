@@ -22,7 +22,7 @@ function saveFoods() {
  /**
  * Fetches calorie data from Open Food Facts API.
  */
-async function fetchCalorieData(foodName, manualCalories) {
+async function fetchCalorieData(foodName) {
   try {
     const response = await fetch(
       `https://world.openfoodfacts.org/cgi/search.pl?search_terms=${foodName}&search_simple=1&action=process&json=1`
@@ -34,29 +34,28 @@ async function fetchCalorieData(foodName, manualCalories) {
 
     const data = await response.json();
 
-    let calories = Number(manualCalories);
+    if (data.products.length === 0) {
+      showMessage("Food not found. Try another name.", "error");
+      return null;
+    }
 
-    if (data.products.length > 0) {
-      const firstFood = data.products[0];
+    const firstFood = data.products[0];
 
-      if (firstFood.nutriments && firstFood.nutriments["energy-kcal_100g"]) {
-        calories = Math.round(firstFood.nutriments["energy-kcal_100g"]);
-      }
+    const calories = firstFood.nutriments["energy-kcal_100g"];
+
+    if (!calories) {
+      showMessage("Calories not available for this food.", "error");
+      return null;
     }
 
     return {
       id: Date.now(),
-      name: foodName,
-      calories: calories,
+      name: firstFood.product_name || foodName,
+      calories: Math.round(calories),
     };
   } catch (error) {
-    showMessage("Could not get food data. Manual calories used.", "error");
-
-    return {
-      id: Date.now(),
-      name: foodName,
-      calories: Number(manualCalories),
-    };
+    showMessage("Could not fetch calorie data.", "error");
+    return null;
   }
 }
 
@@ -131,14 +130,13 @@ async function addFood(event) {
   event.preventDefault();
 
   const foodName = foodNameInput.value.trim();
-  const calories = caloriesInput.value;
 
-  if (foodName === "" || calories <= 0) {
-    showMessage("Please enter valid food details.", "error");
+  if (foodName === "") {
+    showMessage("Please enter a food name.", "error");
     return;
   }
 
-  const newFood = await fetchCalorieData(foodName, calories);
+  const newFood = await fetchCalorieData(foodName);
 
   if (newFood) {
     foods.push(newFood);
