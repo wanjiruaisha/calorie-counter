@@ -183,4 +183,4 @@ Developed by Aisha Wanjiru.
 
 ## License
 
-This project is created for educational purposes and learning web development concepts.
+This project is licensed under the MIT license
