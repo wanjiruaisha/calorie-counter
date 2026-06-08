@@ -18,43 +18,46 @@ function saveFoods() {
   localStorage.setItem("foods", JSON.stringify(foods));
 }
 
-/**
+
  /**
  * Fetches calorie data from Open Food Facts API.
  */
 async function fetchCalorieData(foodName) {
   try {
+    const searchName = encodeURIComponent(foodName);
+
     const response = await fetch(
-      `https://world.openfoodfacts.org/cgi/search.pl?search_terms=${foodName}&search_simple=1&action=process&json=1`
+      `https://world.openfoodfacts.org/cgi/search.pl?search_terms=${searchName}&search_simple=1&action=process&json=1`
     );
 
     if (!response.ok) {
-      throw new Error("Failed to fetch food data");
+      throw new Error("API request failed");
     }
 
     const data = await response.json();
 
-    if (data.products.length === 0) {
-      showMessage("Food not found. Try another name.", "error");
+    if (!data.products || data.products.length === 0) {
+      showMessage("Food not found. Try a more specific name.", "error");
       return null;
     }
 
-    const firstFood = data.products[0];
+    const foodWithCalories = data.products.find((product) => {
+      return product.nutriments && product.nutriments["energy-kcal_100g"];
+    });
 
-    const calories = firstFood.nutriments["energy-kcal_100g"];
-
-    if (!calories) {
-      showMessage("Calories not available for this food.", "error");
+    if (!foodWithCalories) {
+      showMessage("No calorie data found for this food.", "error");
       return null;
     }
 
     return {
       id: Date.now(),
-      name: firstFood.product_name || foodName,
-      calories: Math.round(calories),
+      name: foodWithCalories.product_name || foodName,
+      calories: Math.round(foodWithCalories.nutriments["energy-kcal_100g"]),
     };
   } catch (error) {
-    showMessage("Could not fetch calorie data.", "error");
+    console.error(error);
+    showMessage("Cannot fetch data from API. Check internet or try again.", "error");
     return null;
   }
 }
