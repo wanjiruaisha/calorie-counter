@@ -18,6 +18,7 @@
     <p class="text-center text-gray-500 mb-6">
       Track your daily food calories
     </p>
+    
 
         <!-- Form For Adding Food Items -->
     <form id="foodForm" class="space-y-4">
@@ -44,7 +45,22 @@
         Add Food
       </button>
     </form>
+<!-- Search and Filter Section -->
+<section class="mt-6 grid grid-cols-1 md:grid-cols-2 gap-3">
+  <input
+    type="text"
+    id="searchInput"
+    placeholder="Search food..."
+    class="w-full border p-3 rounded-lg"
+  />
 
+  <select id="filterSelect" class="w-full border p-3 rounded-lg">
+    <option value="all">All Foods</option>
+    <option value="low">Low Calories: Below 200</option>
+    <option value="medium">Medium Calories: 200 - 500</option>
+    <option value="high">High Calories: Above 500</option>
+  </select>
+</section>
     <p id="message" class="text-center mt-3 text-sm"></p>
 
     <!-- Food Items Display Section -->

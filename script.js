@@ -60,6 +60,7 @@ async function fetchCalorieData(foodName) {
     showMessage("Cannot fetch data from API. Check internet or try again.", "error");
     return null;
   }
+  console.log(response.status);
 }
 
 /**
