@@ -6,6 +6,8 @@ const totalCaloriesEl = document.getElementById("totalCalories");
 const resetBtn = document.getElementById("resetBtn");
 const message = document.getElementById("message");
 const progressBar = document.getElementById("progressBar");
+const searchInput = document.getElementById("searchInput");
+const filterSelect = document.getElementById("filterSelect");
 
 const DAILY_GOAL = 2000;
 
@@ -86,7 +88,34 @@ function showMessage(text, type) {
 function displayFoods() {
   foodList.innerHTML = "";
 
-  foods.forEach((food) => {
+  const searchTerm = searchInput.value.toLowerCase();
+  const filterValue = filterSelect.value;
+
+  let filteredFoods = foods.filter((food) => {
+    const matchesSearch = food.name.toLowerCase().includes(searchTerm);
+
+    let matchesFilter = true;
+
+    if (filterValue === "low") {
+      matchesFilter = food.calories < 200;
+    } else if (filterValue === "medium") {
+      matchesFilter = food.calories >= 200 && food.calories <= 500;
+    } else if (filterValue === "high") {
+      matchesFilter = food.calories > 500;
+    }
+
+    return matchesSearch && matchesFilter;
+  });
+
+  if (filteredFoods.length === 0) {
+    foodList.innerHTML = `
+      <li class="text-center text-gray-500 bg-slate-100 p-3 rounded-lg">
+        No food items found.
+      </li>
+    `;
+  }
+
+  filteredFoods.forEach((food) => {
     const li = document.createElement("li");
 
     li.className =
@@ -198,5 +227,7 @@ function resetDay() {
 
 foodForm.addEventListener("submit", addFood);
 resetBtn.addEventListener("click", resetDay);
+searchInput.addEventListener("input", displayFoods);
+filterSelect.addEventListener("change", displayFoods);
 
 displayFoods();
